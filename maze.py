@@ -111,4 +111,139 @@ for row in range(lenminus):
     for col in range(cols-widminus,cols):
         for i in range(10*row,10*row+10):
             image[i,range(10*col,10*col+10)] = 255
+def solve(image, M):
+    path = np.zeros((rows, cols, 2))
+    vis = np.zeros((rows, cols))
+    vis[0][0] = 1
+    queue = deque()
+    queue.append((0, 0))
+    while(queue):
+        temp = queue.popleft()
+        nr = temp[0]
+        nc = temp[1]
+ 
+        if (nc == cols - 1) and (nr == rows - 1):
+            plt.axis('off')
+            trace(image, path)
+            break
+        if (nc > 0) and (not vis[nr][nc - 1]) and (M[nr][nc][0]):
+            vis[nr][nc] = 1
+            queue.append((nr, nc - 1))
+            path[nr][nc - 1][0] = nr
+            path[nr][nc - 1][1] = nc
+        if (nr > 0) and (not vis[nr - 1][nc]) and (M[nr][nc][1]):
+            vis[nr][nc] = 1
+            queue.append((nr - 1, nc))
+            path[nr - 1][nc][0] = nr
+            path[nr - 1][nc][1] = nc
+        if (nc < cols - 1) and (not vis[nr][nc + 1]) and (M[nr][nc][2]):
+            vis[nr][nc] = 1
+            queue.append((nr, nc + 1))
+            path[nr][nc + 1][0] = nr
+            path[nr][nc + 1][1] = nc
+        if (nr < rows - 1) and (not vis[nr + 1][nc]) and (M[nr][nc][3]):
+            vis[nr][nc] = 1
+            queue.append((nr + 1, nc))
+            path[nr + 1][nc][0] = nr
+            path[nr + 1][nc][1] = nc
+
+def trace(image, path):
+    plt.axis('off')
+    plt.imshow(image, cmap=cm.Greys_r, interpolation='none')
+    plt.ion()
+    plt.pause(2)
+    str = ""
+    stack = []
+    nr = rows - 1
+    nc = cols - 1
+    stack.append((nr, nc + 1))
+    stack.append((nr, nc))
+    while nr or nc:
+        tr = nr
+        tc = nc
+        nr = (int)(path[tr][tc][0])
+        nc = (int)(path[tr][tc][1])
+        stack.append((nr, nc))
+    pr = 0
+    pc = 0
+    dir = 2
+    while(stack):
+        temp = stack.pop()
+        nr = temp[0]
+        nc = temp[1]
+        if nr or nc:
+            if (nr == pr):
+                if (nc > pc):
+
+                   if (dir == 2):
+                        image[10 * pr + 4,range(10 * pc + 0, 10 * pc + 10)] = 128
+                        image[10 * pr + 5,range(10 * pc + 0, 10 * pc + 10)] = 128
+                   elif (dir == 1):
+                        image[10 * pr + 4,range(10 * pc + 4, 10 * pc + 10)] = 128
+                        image[10 * pr + 5,range(10 * pc + 4, 10 * pc + 10)] = 128
+                        image[range(10 * pr + 4, 10 * pr + 10),10 * pc + 4] = 128
+                        image[range(10 * pr + 4, 10 * pr + 10),10 * pc + 5] = 128
+                   elif (dir == 3):
+                        image[10 * pr + 4,range(10 * pc + 4, 10 * pc + 10)] = 128
+                        image[10 * pr + 5,range(10 * pc + 4, 10 * pc + 10)] = 128
+                        image[range(10 * pr + 0, 10 * pr + 6),10 * pc + 4] = 128
+                        image[range(10 * pr + 0, 10 * pr + 6),10 * pc + 5] = 128
+                   dir = 2
+                else:
+                    if (dir == 0):
+                        image[10 * pr + 4,range(10 * pc + 0, 10 * pc + 10)] = 128
+                        image[10 * pr + 5,range(10 * pc + 0, 10 * pc + 10)] = 128
+                    elif (dir == 1):
+                        image[10 * pr + 4,range(10 * pc + 0, 10 * pc + 6)] = 128
+                        image[10 * pr + 5,range(10 * pc + 0, 10 * pc + 6)] = 128
+                        image[range(10 * pr + 4, 10 * pr + 10),10 * pc + 4] = 128
+                        image[range(10 * pr + 4, 10 * pr + 10),10 * pc + 5] = 128
+                    elif (dir == 3):
+                        image[10 * pr + 4,range(10 * pc + 0, 10 * pc + 6)] = 128
+                        image[10 * pr + 5,range(10 * pc + 0, 10 * pc + 6)] = 128
+                        image[range(10 * pr + 0, 10 * pr + 6),10 * pc + 4] = 128
+                        image[range(10 * pr + 0, 10 * pr + 6),10 * pc + 5] = 128
+                    dir = 0
+            elif (nc == pc):
+                if (nr > pr):
+                    if (dir == 3):
+                        image[range(10 * pr + 0, 10 * pr + 10),10 * pc + 4] = 128
+                        image[range(10 * pr + 0, 10 * pr + 10),10 * pc + 5] = 128
+                    elif (dir == 0):
+                        image[10 * pr + 4,range(10 * pc + 4, 10 * pc + 10)] = 128
+                        image[10 * pr + 5,range(10 * pc + 4, 10 * pc + 10)] = 128
+                        image[range(10 * pr + 4, 10 * pr + 10),10 * pc + 4] = 128
+                        image[range(10 * pr + 4, 10 * pr + 10),10 * pc + 5] = 128
+                    elif (dir == 2):
+                        image[10 * pr + 4,range(10 * pc + 0, 10 * pc + 6)] = 128
+                        image[10 * pr + 5,range(10 * pc + 0, 10 * pc + 6)] = 128
+                        image[range(10 * pr + 4, 10 * pr + 10),10 * pc + 4] = 128
+                        image[range(10 * pr + 4, 10 * pr + 10),10 * pc + 5] = 2128
+                    dir = 3
+                else:
+                    if (dir == 1):
+                        image[range(10 * pr + 0, 10 * pr + 10),10 * pc + 4] = 128
+                        image[range(10 * pr + 0, 10 * pr + 10),10 * pc + 5] = 128
+                    elif (dir == 0):
+                        image[10 * pr + 4,range(10 * pc + 4, 10 * pc + 10)] = 128
+                        image[10 * pr + 5,range(10 * pc + 4, 10 * pc + 10)] = 128
+                        image[range(10 * pr + 0, 10 * pr + 6),10 * pc + 4] = 128
+                        image[range(10 * pr + 0, 10 * pr + 6),10 * pc + 5] = 128
+                    elif (dir == 2):
+                        image[10 * pr + 4,range(10 * pc + 0, 10 * pc + 6)] = 128
+                        image[10 * pr + 5,range(10 * pc + 0, 10 * pc + 6)] = 128
+                        image[range(10 * pr + 0, 10 * pr + 6),10 * pc + 4] = 128
+                        image[range(10 * pr + 0, 10 * pr + 6),10 * pc + 5] = 128
+                    dir = 1
+            pr = nr
+            pc = nc
+            plt.axis('off')
+            plt.clf()
+            plt.imshow(image, cmap=cm.Greys_r, interpolation='none')
+            if not (stack):
+                plt.axis('off')
+                plt.show()
+
+solve(image, M)
+plt.show()
 
